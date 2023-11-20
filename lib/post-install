@@ -1,0 +1,100 @@
+#!/bin/bash
+
+run_postinstall() {
+
+    # Keep-alive: update existing `sudo` time stamp until `we are` has finished
+    while true; do
+        sudo -n true
+        sleep 60
+        kill -0 "$$" || exit
+    done 2>/dev/null &
+
+    # Remove the quarantine attribute for quicklook plugins
+    xattr -d -r com.apple.quarantine ~/Library/QuickLook
+
+    e_header "Have launchd start httpd now and restart at startup"
+    sudo brew services start httpd
+    [[ $? ]] && e_success "Done"
+
+    mkcert -install
+
+    e_header "Configure apache/httpd"
+
+    apacheConf=$(sudo httpd -V | grep -i server_config_file | cut -d '"' -f 2)
+    mkdir -p $(dirname $apacheConf)/sites-enabled
+
+    # load dev modules
+    sudo sed -i -e "/LoadModule rewrite_module/s/^#//" $apacheConf &&
+    sudo sed -i -e "/LoadModule deflate_module/s/^#//" $apacheConf &&
+    sudo sed -i -e "/LoadModule expires_module/s/^#//" $apacheConf &&
+    sudo sed -i -e "/LoadModule ssl_module/s/^#//" $apacheConf &&
+    sudo sed -i -e "/LoadModule http2_module/s/^#//" $apacheConf &&
+    sudo sed -i -e "/LoadModule socache_shmcb_module/s/^#//" $apacheConf &&
+    sudo sed -i -e "/LoadModule vhost_alias_module/s/^#//" $apacheConf &&
+    sudo sed -i -e "/httpd-ssl.conf/s/^#//" $apacheConf &&
+    sudo sed -i -e "/php5_module/s/^#*/#/" $apacheConf &&
+    sudo sed -i -e "/php7_module/s/^#//" $apacheConf &&
+    sudo sed -i -e "s/DirectoryIndex index.html/DirectoryIndex index.php index.html/g" $apacheConf &&
+    sudo sed -i -e "s/User daemon/User _www/g" $apacheConf &&
+    sudo sed -i -e "s/Group daemon/Group _www/g" $apacheConf &&
+    sudo sed -i -r "s/^Listen 80\d+/Listen 80/g" $apacheConf &&
+    mkdir -p /Users/$(whoami)/Sites &&
+    sudo sed -i -e "s/\/usr\/local\/var\/www\/htdocs/\/Users\/$(whoami)\/Sites/g" $apacheConf &&
+    sudo sed -i -r "s/#ServerName.*/ServerName localhost/" $apacheConf &&
+    echo "" >>$apacheConf &&
+    echo "<FilesMatch \.php$>" >>$apacheConf &&
+    echo "    SetHandler application/x-httpd-php" >>$apacheConf &&
+    echo "</FilesMatch>" >>$apacheConf &&
+    sudo apachectl -k restart
+    [[ $? ]] && e_success "Done"
+
+    e_header "Install php switcher script"
+    curl -L https://gist.githubusercontent.com/rhukster/f4c04f1bf59e0b74e335ee5d186a98e2/raw/adc8c149876bff14a33e3ac351588fdbe8172c07/sphp.sh >/usr/local/bin/sphp
+    chmod +x /usr/local/bin/sphp
+
+    e_header "Setting up oh-my-zsh..."
+    # zsh / oh-my-zsh
+    wget --no-check-certificate https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh
+    # use sindres pure theme
+    rsync -avz --quiet ${DOTFILES_DIRECTORY}/shell/pure.zsh-theme ${HOME}/.oh-my-zsh/custom/pure.zsh-theme
+    # set zsh as default shell
+    chsh -s $(which zsh)
+    [[ $? ]] && e_success "Done"
+
+    e_header "Adding git-friendly..."
+    # https://github.com/jamiew/git-friendly
+    # the `push` command which copies the github compare URL to my clipboard is heaven
+    bash -c "$(curl -fsSL raw.githubusercontent.com/jamiew/git-friendly/master/install.sh)"
+    [[ $? ]] && e_success "Done"
+
+    # allow mtr to run without sudo
+    mtrlocation=$(brew info mtr | grep Cellar | sed -e 's/ (.*//') #  e.g. `/Users/paulirish/.homebrew/Cellar/mtr/0.86`
+    sudo chmod 4755 $mtrlocation/sbin/mtr
+    sudo chown root $mtrlocation/sbin/mtr
+
+    # dnsmasq
+    e_header "Setting up dnsmasq..."
+    mkdir -pv $(brew --prefix)/etc/ &&
+        echo 'address=/.develop/127.0.0.1' >>$(brew --prefix)/etc/dnsmasq.conf &&
+        echo 'address=/.work/127.0.0.1' >>$(brew --prefix)/etc/dnsmasq.conf &&
+        echo 'address=/.localhost/127.0.0.1' >>$(brew --prefix)/etc/dnsmasq.conf &&
+        sudo cp -v $(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist /Library/LaunchDaemons &&
+        sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist &&
+        sudo mkdir -v /etc/resolver &&
+        sudo zsh -c 'echo "nameserver 127.0.0.1" > /etc/resolver/work' &&
+        sudo zsh -c 'echo "nameserver 127.0.0.1" > /etc/resolver/develop' &&
+        sudo zsh -c 'echo "nameserver 127.0.0.1" > /etc/resolver/localhost' &&
+        #flush cache
+        sudo discoveryutil mdnsflushcache && scutil --dns
+    [[ $? ]] && e_success "Done"
+
+    # create bin dir
+    mkdir -p ${HOME}/bin
+
+    # install pygments syntax highlighter
+    # http://pygments.org/
+    pip3 install pygments
+
+    # configure diff-so-fancy
+    git config --global core.pager "diff-so-fancy | less --tabs=4 -RFX"
+}
