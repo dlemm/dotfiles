@@ -12,17 +12,17 @@ run_cask() {
         local -a missing_casks
         local -a desired_casks=(
             # daily
-            'spectacle'
-            'alfred'
-            'slack'
+            'raycast'
+            'notion'
+            '1password'
+            'github'
+            'warp'
 
             # dev
-            'sublime-text'
             'visual-studio-code'
             'imagealpha'
             'imageoptim'
             'postman'
-            'obsidian'
 
             # browsers
             'google-chrome'
@@ -32,15 +32,20 @@ run_cask() {
             'brave-browser'
 
             #graphics
-            'sketch'
+            'figma'
             'tinypng4mac'
             'handbrake'
+            'adobe-creative-cloud'
 
             # less often
+            'slack'
+            'rectangle'
+            'sonos'
             'gpg-suite'
             'licecap'
             'clipgrab'
             'kap'
+            'discord'
         )
 
         for index in ${!desired_casks[*]}; do

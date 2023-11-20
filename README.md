@@ -1,6 +1,6 @@
-# Bens's dotfiles
+# Dennis's dotfiles
 
-This repo contains *my* dotfiles. It is heavily based on [necolas](https://github.com/necolas/dotfiles)'s and it's also still work in progress.
+This repo contains *my* dotfiles. It is heavily based on [Ben](https://github.com/bezoerb/dotfiles)'s and it is going to  stay in a work in progress mode.
 
 ## Main differences
 
@@ -14,7 +14,7 @@ Tools](https://developer.apple.com/downloads) and --> may overwrite existing
 dotfiles in your HOME and `.vim` directories.
 
 ```bash
-$ bash -c "$(curl -fsSL raw.github.com/bezoerb/dotfiles/main/bin/dotfiles)"
+$ bash -c "$(curl -fsSL raw.github.com/dlemm/dotfiles/main/bin/dotfiles)"
 ```
 
 N.B. If you wish to fork this project and maintain your own dotfiles, you must
@@ -69,6 +69,8 @@ $ macosdefaults
 
 Inspiration and code was taken from many sources, including:
 
+* [@bezoerb](https://github.com/bezoerb) (Ben Zoerb)
+  [https://github.com/necolas/dotfiles](https://github.com/necolas/dotfiles)
 * [@necolas](https://github.com/necolas) (Nicolas Gallagher)
   [https://github.com/necolas/dotfiles](https://github.com/necolas/dotfiles)
 * [@addyosmani](https://github.com/addyosmani) (Addy Osmani)

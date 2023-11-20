@@ -3,8 +3,8 @@
 # dotfiles startup script taken from necolas
 
 DOTFILES_DIRECTORY="${HOME}/.dotfiles"
-DOTFILES_TARBALL_PATH="https://github.com/bezoerb/dotfiles/tarball/main"
-DOTFILES_GIT_REMOTE="git@github.com:bezoerb/dotfiles.git"
+DOTFILES_TARBALL_PATH="https://github.com/dlemm/dotfiles/tarball/main"
+DOTFILES_GIT_REMOTE="git@github.com:dlemm/dotfiles.git"
 
 # If missing, download and extract the dotfiles repository
 if [[ ! -d ${DOTFILES_DIRECTORY} ]]; then
