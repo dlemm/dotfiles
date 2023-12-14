@@ -108,7 +108,7 @@ run_brew() {
             'optipng'
             'zopfli'
             'jpeg'
-            'youtube-dl'
+            'yt-dlp'
             'awscli'
             'contentful-cli'
 
