@@ -20,7 +20,6 @@ run_cask() {
 
             # dev
             'visual-studio-code'
-            'imagealpha'
             'imageoptim'
             'postman'
 

@@ -50,12 +50,10 @@ run_brew() {
             'gh'
 
             # font tools
-            'sfnt2woff'
-            'sfnt2woff-zopfli'
             'woff2'
 
             # system
-            'openssl'
+            'openssl@3'
             'openssh'
             'dnsmasq'
             'gnupg'
