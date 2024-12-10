@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Ask for the number of tiles that should be added
+read -p "How many tiles would you like to add to the dock?" SPACERS
+
+# Check if input is number
+if [[ "$SPACERS" =~ ^[0-9]+$ ]]; then
+  echo "FAdding $SPACERS Spacer Tiles..."
+
+  # Delete all already added spacer tiles 
+  defaults write com.apple.dock persistent-apps -array
+
+  # Adding the requested spacer tiles
+  for i in $(seq 1 $SPACERS); do
+    defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type="spacer-tile";}'
+  done
+
+  # restart Dock for changes
+  killall Dock
+  echo "Finished! $SPACERS Spacer Tiles were added."
+else
+  echo "Error. Please add a number."
+fi
