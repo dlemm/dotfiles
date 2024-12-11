@@ -13,7 +13,7 @@ run_cask() {
         local -a desired_casks=(
             # daily
             'raycast'
-            'notion'
+            'obsidian'
             '1password'
             'github'
             'warp'
