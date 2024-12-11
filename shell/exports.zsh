@@ -11,7 +11,7 @@ export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 export PUPPETEER_EXECUTABLE_PATH=`which chromium`
 
 # Make vim the default editor.
-export EDITOR=/usr/bin/vim
+export EDITOR=/usr/bin/nvim
 
 export ANDROID_HOME=~/Library/Android/sdk
 
@@ -38,6 +38,3 @@ export HISTFILESIZE="${HISTSIZE}"
 export HISTCONTROL='ignoreboth'
 
 eval "$(fnm env)"
-
-export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-export PUPPETEER_EXECUTABLE_PATH=`which chromium`

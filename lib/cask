@@ -34,16 +34,9 @@ run_cask() {
             'figma'
             'tinypng4mac'
             'handbrake'
-            'adobe-creative-cloud'
 
             # less often
-            'slack'
             'rectangle'
-            'sonos'
-            'gpg-suite'
-            'licecap'
-            'clipgrab'
-            'kap'
             'discord'
         )
 

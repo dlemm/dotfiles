@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# dotfiles startup script taken from necolas
+# dotfiles startup script taken from ben
 
 DOTFILES_DIRECTORY="${HOME}/.dotfiles"
 DOTFILES_TARBALL_PATH="https://github.com/dlemm/dotfiles/tarball/main"
 DOTFILES_GIT_REMOTE="git@github.com:dlemm/dotfiles.git"
+NVIM_REPO="https://github.com/dlemm/nvim"
 
 # If missing, download and extract the dotfiles repository
 if [[ ! -d ${DOTFILES_DIRECTORY} ]]; then
@@ -220,6 +221,44 @@ if is_confirmed; then
 else
     printf "Aborting...\n"
     exit 1
+fi
+
+
+# Install my Neovim-config
+NVIM_CONFIG_DIR="$HOME/.config/nvim"
+NVIM_BACKUP_DIR="$HOME/.config/nvim_backup"
+
+# Check if an existing Neovim configuration exists
+if [ -d "$NVIM_CONFIG_DIR" ]; then
+    echo "Existing Neovim configuration found. Renaming to nvim_backup..."
+    if [ -d "$NVIM_BACKUP_DIR" ]; then
+        echo "A backup already exists. Removing the old backup."
+        rm -rf "$NVIM_BACKUP_DIR"
+    fi
+    mv "$NVIM_CONFIG_DIR" "$NVIM_BACKUP_DIR"
+    echo "Backup created at $NVIM_BACKUP_DIR."
+fi
+
+# Clone the new Neovim configuration
+echo "Cloning Neovim configuration..."
+git clone "$NVIM_REPO" "$NVIM_CONFIG_DIR"
+echo "Neovim configuration installed successfully."
+
+# Install Lazy.nvim
+LAZY_PATH="$NVIM_CONFIG_DIR/lua/lazy.lua"
+if [ ! -d "$LAZY_PATH" ]; then
+    echo "Installing Lazy.nvim..."
+    git clone https://github.com/folke/lazy.nvim.git "$LAZY_PATH"
+    echo "Lazy.nvim installed successfully."
+fi
+
+# Sync Lazy.nvim plugins
+if command -v nvim &> /dev/null; then
+    echo "Syncing Lazy.nvim plugins..."
+    nvim --headless "+Lazy! sync" +qall
+    echo "Plugins synchronized successfully."
+else
+    echo "Neovim is not installed. Plugins were not synchronized."
 fi
 
 # Ask before potentially overwriting macOS defaults

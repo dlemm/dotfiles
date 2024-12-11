@@ -64,6 +64,7 @@ run_brew() {
             'nss'
             'binwalk'
             'binutils'
+            'curl'
 
             # shell
             'ack'
@@ -91,6 +92,16 @@ run_brew() {
             'cheat'
             'grex'
             'nginx'
+            'gatsby-cli'
+            'lazygit'
+            'lua'
+            'mjml'
+            'neovim'
+            'thefuck'
+            'tmux'
+            'tree'
+            'treesitter'
+            'typescript'
 
             # tools
             'ssh-copy-id'
